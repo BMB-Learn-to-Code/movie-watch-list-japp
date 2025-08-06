@@ -17,6 +17,13 @@ class App {
                         new Movie("The Godfather", 1972L)
                 }
         ));
+        app.get("/movies/watched", ctx -> {
+            Movie[] watchedMovies = {
+                new Movie("Inception", 2010L),
+                new Movie("The Matrix", 1999L)
+            };
+            ctx.json(watchedMovies);
+        });
 
 
         app.start(8080);
