@@ -26,7 +26,7 @@ class App {
 
         app.get("/movies", ctx -> ctx.json(movies));
         app.get("/movies/watched", ctx -> ctx.json(watchedMovies));
-        app.get("/movies/upcoming", ctx -> ctx.json(movies.stream().filter(movie -> movie.getReleaseDate() > 2025L).toList()));
+        app.get("/movies/upcoming", ctx -> ctx.json(movies.stream().filter(movie -> movie.releaseDate() > 2025L).toList()));
 
 
         app.start(8080);
