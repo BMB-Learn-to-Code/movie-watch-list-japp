@@ -1,0 +1,98 @@
+{
+  "info": {
+    "_postman_id": "b1e7a8c2-8d2a-4c2a-9e7a-123456789abc",
+    "name": "Movie Watch List API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Collection for testing Movie Watch List API endpoints."
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Get All Movies",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/movies",
+          "host": ["{{baseUrl}}"],
+          "path": ["movies"]
+        }
+      }
+    },
+    {
+      "name": "Get Watched Movies",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/movies/watched",
+          "host": ["{{baseUrl}}"],
+          "path": ["movies", "watched"]
+        }
+      }
+    },
+    {
+      "name": "Get Upcoming Movies",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/movies/upcoming",
+          "host": ["{{baseUrl}}"],
+          "path": ["movies", "upcoming"]
+        }
+      }
+    },
+    {
+      "name": "Watch Movies",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"movieIds\": [1, 2]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/movies/watch",
+          "host": ["{{baseUrl}}"],
+          "path": ["movies", "watch"]
+        }
+      }
+    },
+    {
+      "name": "Watch Movies (GET, should fail)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/movies/watch",
+          "host": ["{{baseUrl}}"],
+          "path": ["movies", "watch"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:7000"
+    }
+  ]
+}
+

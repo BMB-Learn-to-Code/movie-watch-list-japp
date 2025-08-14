@@ -7,7 +7,7 @@ A minimal RESTful API for a personal movie watch list, built with:
 - SQLite JDBC (driver dependency present – persistence not yet wired)
 - Jackson (JSON serialization)
 
-Currently the app serves an in‑memory list of movies and a few filtered views.
+Currently, the app serves an in‑memory list of movies and a few filtered views.
 
 ## Quick Start
 
@@ -30,11 +30,11 @@ The server starts (by default) on: http://localhost:7070
 ## Configuration
 Configuration is read from environment variables in `ApplicationConfig`:
 
-| Purpose | Env Var (intended) | Default | Notes |
-|---------|--------------------|---------|-------|
-| HTTP Port | `APP_PORT` | 7070 | Must be 1–65535 |
-| Environment | `ENV` (code currently looks for `ENV:`) | dev | See Known Issues below |
-| App Version | `APP_VERSION` (code currently looks for `APP_VERSION:`) | 1.0.0 | See Known Issues below |
+| Purpose     | Env Var (intended)                                      | Default | Notes                  |
+|-------------|---------------------------------------------------------|---------|------------------------|
+| HTTP Port   | `APP_PORT`                                              | 7070    | Must be 1–65535        |
+| Environment | `ENV` (code currently looks for `ENV:`)                 | dev     | See Known Issues below |
+| App Version | `APP_VERSION` (code currently looks for `APP_VERSION:`) | 1.0.0   | See Known Issues below |
 
 Export before running, e.g.:
 ```bash
@@ -48,19 +48,29 @@ mvn exec:java
 `ApplicationConfig` currently calls `System.getenv("ENV:")` and `System.getenv("APP_VERSION:")` (with trailing colons). Typical shells will set variables without colons (e.g. `ENV`, `APP_VERSION`). Until corrected, the app will always fall back to defaults for those two values. If you want to patch it, remove the colons in `ApplicationConfig`.
 
 ## API Endpoints
-All responses are JSON.
 
-| Method | Path | Description | Sample Response |
-|--------|------|-------------|-----------------|
-| GET | `/health` | Health + version | `{ "status": "UP", "version": "1.0.0" }` |
-| GET | `/movies` | All movies (static in-memory list) | Array of Movie objects |
-| GET | `/movies/watched` | Subset marked as watched | Array |
-| GET | `/movies/upcoming` | Movies with `releaseDate > 2025` | Array |
+The API exposes the following endpoints:
 
-`Movie` model:
-```json
-{ "title": "Inception", "releaseDate": 2010 }
-```
+- `GET /health` — Health check for the service
+- `GET /movies` — List all movies
+- `GET /movies/watched` — List watched movies
+- `GET /movies/upcoming` — List upcoming movies
+- `POST /movies/watch` — Mark movies as watched (expects JSON body: `{ "movieIds": [1, 2] }`)
+- `GET /movies/watch` — Should return 405 Method Not Allowed
+
+## Postman Collection
+
+A Postman collection file is included to help you test the API endpoints easily:
+
+**File:** `MovieWatchList.postman_collection.json`
+
+### How to Use
+1. Open Postman.
+2. Click **Import** and select the `MovieWatchList.postman_collection.json` file from the project root.
+3. The collection will appear with all endpoints organized for easy testing.
+4. The collection uses a variable `{{baseUrl}}` (default: `http://localhost:7070`). You can change this in the collection settings if your server runs on a different port.
+
+Each request in the collection matches an API endpoint and includes example payloads for POST requests.
 
 ## Testing
 Uses JUnit (both legacy `junit:junit` and Jupiter dependency declared — consider consolidating).
@@ -103,11 +113,10 @@ Uses `slf4j-simple`. Adjust by supplying a `simplelogger.properties` on the clas
 5. Open a PR describing motivation & changes
 
 ## License
-AGPL-3.0 — see [LICENSE](./LICENSE). If you run a modified version as a network service, you must make the source (including modifications) available to users interacting with it.
+AG PL-3.0 — see [LICENSE](./LICENSE). If you run a modified version as a network service, you must make the source (including modifications) available to users interacting with it.
 
 ## Attribution / Notes
 Generated endpoints are intentionally minimal for learning purposes. Feel free to evolve this into a fuller watch list service.
 
 ---
 Happy hacking!
-
