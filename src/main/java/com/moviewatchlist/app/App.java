@@ -1,5 +1,6 @@
 package com.moviewatchlist.app;
 
+import com.moviewatchlist.app.config.ApplicationConfig;
 import com.moviewatchlist.app.models.Movie;
 import io.javalin.Javalin;
 
@@ -9,6 +10,8 @@ import java.util.List;
 class App {
 
     public static void main(String[] args) {
+        ApplicationConfig cfg = ApplicationConfig.builder();
+
         System.out.println("Hello Javalings!");
         Javalin app = Javalin.create();
 
@@ -24,11 +27,13 @@ class App {
                 List.of(movies.get(0), movies.get(1))
         );
 
+        app.get("/health", ctx -> ctx.result( "{\"status\": \"UP\", \"version\": " + cfg.getVersion() + "\"}").status(200));
         app.get("/movies", ctx -> ctx.json(movies));
         app.get("/movies/watched", ctx -> ctx.json(watchedMovies));
         app.get("/movies/upcoming", ctx -> ctx.json(movies.stream().filter(movie -> movie.releaseDate() > 2025L).toList()));
 
 
-        app.start(8080);
+        app.start(cfg.getPort());
+        org.slf4j.LoggerFactory.getLogger(App.class).info("App started on port {} in {} environment.", cfg.getPort(), cfg.getEnv());
     }
 }
