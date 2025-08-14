@@ -3,11 +3,12 @@ package com.moviewatchlist.app.web;
 import com.moviewatchlist.app.web.controllers.HealthController;
 import com.moviewatchlist.app.web.controllers.MoviesController;
 import io.javalin.Javalin;
+import org.jetbrains.annotations.NotNull;
 
 public class Routes {
     private Routes(){}
 
-    public static void register(Javalin app, String env, String version) {
+    public static void register(@NotNull Javalin app, String env, String version) {
         var healthCtrl = new HealthController(env, version);
         app.get("/health", healthCtrl::health);
 

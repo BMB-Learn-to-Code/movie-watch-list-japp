@@ -14,7 +14,6 @@ public class App {
 
         Routes.register(app,cfg.getEnv(), cfg.getVersion());
 
-
         app.start(cfg.getPort());
         org.slf4j.LoggerFactory.getLogger(App.class).info("App started on port {} in {} environment.", cfg.getPort(), cfg.getEnv());
     }
