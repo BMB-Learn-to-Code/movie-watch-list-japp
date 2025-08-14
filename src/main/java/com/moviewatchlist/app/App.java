@@ -6,8 +6,9 @@ import io.javalin.Javalin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-class App {
+public class App {
 
     public static void main(String[] args) {
         ApplicationConfig cfg = ApplicationConfig.builder();
@@ -27,7 +28,7 @@ class App {
                 List.of(movies.get(0), movies.get(1))
         );
 
-        app.get("/health", ctx -> ctx.result( "{\"status\": \"UP\", \"version\": " + cfg.getVersion() + "\"}").status(200));
+        app.get("/health", ctx -> ctx.json(Map.of("status", "UP", "version", cfg.getVersion())).status(200));
         app.get("/movies", ctx -> ctx.json(movies));
         app.get("/movies/watched", ctx -> ctx.json(watchedMovies));
         app.get("/movies/upcoming", ctx -> ctx.json(movies.stream().filter(movie -> movie.releaseDate() > 2025L).toList()));

@@ -75,7 +75,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>com.example.App</mainClass>
+                    <mainClass>com.moviewatchlist.app.App</mainClass>
                 </configuration>
             </plugin>
         </plugins>
