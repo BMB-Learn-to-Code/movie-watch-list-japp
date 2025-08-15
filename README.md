@@ -7,7 +7,7 @@ A minimal RESTful API for a personal movie watch list, built with:
 - SQLite JDBC (driver dependency present – persistence not yet wired)
 - Jackson (JSON serialization)
 
-Currently, the app serves an in‑memory list of movies and a few filtered views.
+Currently, the app serves an in‑memory list of movies via controller classes. Watched movies start empty (no pre-seeded watched list) and are stored only in memory for the lifetime of the process.
 
 ## Quick Start
 
@@ -20,12 +20,12 @@ Run (simple):
 ```bash
 mvn clean compile exec:java
 ```
-Or with the helper script (includes version + env echo + Java version guard):
+Or with the helper script (includes version/env echo + Java version guard):
 ```bash
 ./scripts/run.sh
 ```
 
-The server starts (by default) on: http://localhost:7070
+Default base URL: `http://localhost:7070`
 
 ## Configuration
 Configuration is read from environment variables in `ApplicationConfig`:
@@ -33,10 +33,10 @@ Configuration is read from environment variables in `ApplicationConfig`:
 | Purpose     | Env Var (intended)                                      | Default | Notes                  |
 |-------------|---------------------------------------------------------|---------|------------------------|
 | HTTP Port   | `APP_PORT`                                              | 7070    | Must be 1–65535        |
-| Environment | `ENV` (code currently looks for `ENV:`)                 | dev     | See Known Issues below |
-| App Version | `APP_VERSION` (code currently looks for `APP_VERSION:`) | 1.0.0   | See Known Issues below |
+| Environment | `ENV` (code currently looks for `ENV:`)                 | dev     | See Known Issues       |
+| App Version | `APP_VERSION` (code currently looks for `APP_VERSION:`) | 1.0.0   | See Known Issues       |
 
-Export before running, e.g.:
+Example:
 ```bash
 export APP_PORT=9090
 export ENV=prod
@@ -44,79 +44,145 @@ export APP_VERSION=1.2.3
 mvn exec:java
 ```
 
-### Known Issue – Trailing Colons in Variable Names
-`ApplicationConfig` currently calls `System.getenv("ENV:")` and `System.getenv("APP_VERSION:")` (with trailing colons). Typical shells will set variables without colons (e.g. `ENV`, `APP_VERSION`). Until corrected, the app will always fall back to defaults for those two values. If you want to patch it, remove the colons in `ApplicationConfig`.
+### Known Issues (Current Code)
+| Area               | Issue                                                                                                                                          | Impact                                                                                                | Suggested Fix                                                       |
+|--------------------|------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
+| Env vars           | Uses `System.getenv("ENV:")` & `System.getenv("APP_VERSION:")` (trailing colons)                                                               | Always falls back to defaults unless OS actually defines vars with colons (rare)                      | Remove trailing colons in `ApplicationConfig`                       |
+| Health endpoint    | `HealthController` record defined as `(String version, String env)` but instantiated as `new HealthController(env, version)`                   | Returned JSON swaps version/env values (`Env` shows version, `version` shows env)                     | Swap constructor arg order in `Routes` or reorder record components |
+| POST /movies/watch | Logic checks existence in master `movies` list, not `watchedMovies`, still returns 409 "Movie already watched" if title exists in base catalog | Can't mark an existing catalog movie as watched; only totally new titles can be added to watched list | Change 409 check to search `watchedMovies` instead                  |
+| POST /movies/watch | Success (201) does not echo resource or location header                                                                                        | Harder for clients to confirm what was stored                                                         | Return created movie JSON + maybe `Location` header                 |
+| Data persistence   | All data in-memory only                                                                                                                        | Data lost on restart                                                                                  | Add persistence layer (SQLite already available)                    |
 
 ## API Endpoints
+Implemented in `Routes` + controller classes. All responses JSON unless stated.
 
-The API exposes the following endpoints:
+### 1. Health
+GET `/health`
 
-- `GET /health` — Health check for the service
-- `GET /movies` — List all movies
-- `GET /movies/watched` — List watched movies
-- `GET /movies/upcoming` — List upcoming movies
-- `POST /movies/watch` — Mark movies as watched (expects JSON body: `{ "movieIds": [1, 2] }`)
-- `GET /movies/watch` — Should return 405 Method Not Allowed
+Current (due to parameter inversion bug) sample response:
+```json
+{ "status": "up", "Env": "1.0.0", "version": "dev" }
+```
+Intended (after fix):
+```json
+{ "status": "up", "Env": "dev", "version": "1.0.0" }
+```
 
-## Postman Collection
+### 2. List All Movies
+GET `/movies`
+Returns static in-memory catalog:
+```json
+[
+  { "title": "Inception", "releaseDate": 2010 },
+  { "title": "The Matrix", "releaseDate": 1999 },
+  { "title": "Interstellar", "releaseDate": 2014 },
+  { "title": "The Shawshank Redemption", "releaseDate": 1994 },
+  { "title": "The Godfather", "releaseDate": 1972 },
+  { "title": "Dune 3", "releaseDate": 2026 }
+]
+```
 
-A Postman collection file is included to help you test the API endpoints easily:
+### 3. Watched Movies
+GET `/movies/watched`
+Returns list of movies the user has marked as watched during this runtime (initially `[]`).
 
-**File:** `MovieWatchList.postman_collection.json`
+### 4. Upcoming Movies
+GET `/movies/upcoming`
+Filters catalog by `releaseDate > 2025`.
 
-### How to Use
-1. Open Postman.
-2. Click **Import** and select the `MovieWatchList.postman_collection.json` file from the project root.
-3. The collection will appear with all endpoints organized for easy testing.
-4. The collection uses a variable `{{baseUrl}}` (default: `http://localhost:7070`). You can change this in the collection settings if your server runs on a different port.
+### 5. Mark a Movie as Watched
+POST `/movies/watch`
 
-Each request in the collection matches an API endpoint and includes example payloads for POST requests.
+Request body (movie object – NOT an ID list):
+```json
+{ "title": "My New Indie", "releaseDate": 2027 }
+```
+Responses:
+- `201 Created` (body currently empty) when accepted
+- `400 Bad Request` if any of `title` or `releaseDate` is null / missing
+- `409 Conflict` if a movie with the same title already exists in the base catalog (note: this is a logic bug; it should check watched list)
+
+### 6. Method Not Allowed Guard
+GET `/movies/watch` → `405 Method Not Allowed` (explicitly implemented guard).
+
+### Model
+`Movie` record:
+```json
+{ "title": "Inception", "releaseDate": 2010 }
+```
+
+## Example cURL Commands
+```bash
+# Health (current buggy env/version order)
+curl -s http://localhost:7070/health | jq
+
+# List movies
+curl -s http://localhost:7070/movies | jq
+
+# Add watched movie (must be a NEW title not in base list due to current 409 logic)
+curl -i -X POST http://localhost:7070/movies/watch \
+  -H 'Content-Type: application/json' \
+  -d '{"title":"Completely Original","releaseDate":2030}'
+
+# List watched
+curl -s http://localhost:7070/movies/watched | jq
+```
+
+## Postman & HTTP Files
+- `MovieWatchList.postman_collection.json` (import into Postman; uses `{{baseUrl}}` defaulting to `http://localhost:7070`).
+- `MovieWatchList.http` (for IDEs like IntelliJ / VS Code REST client).
 
 ## Testing
-Uses JUnit (both legacy `junit:junit` and Jupiter dependency declared — consider consolidating).
+JUnit (both legacy `junit:junit` and Jupiter present — consider consolidating to JUnit 5 only).
 
-Run tests:
+Run:
 ```bash
 mvn test
 ```
-
-Current test (`AppTest`) ensures the application boots without throwing.
+Current test: `AppTest` ensures the application boots without throwing.
 
 ## Project Structure
 ```
 src/
   main/java/com/moviewatchlist/app/
-    App.java                # Javalin bootstrap & routes
-    config/ApplicationConfig.java  # Env/config handling
-    models/Movie.java       # Movie record
-  test/java/.../AppTest.java       # Basic startup test
-scripts/run.sh              # Helper run script
-pom.xml                     # Maven build (Java 21, exec plugin)
+    App.java                       # Bootstrap & server start
+    config/ApplicationConfig.java  # Env/config handling (env var colon issue)
+    models/Movie.java              # Movie record
+    web/Routes.java                # Route registration
+    web/controllers/
+      HealthController.java        # /health endpoint
+      MoviesController.java        # /movies* endpoints & in-memory state
+scripts/
+  run.sh                          # Run with Java version guard
+  test.sh                         # (if present) convenience test script
+  package.sh                      # (if present) packaging script
 ```
 
 ## Logging
-Uses `slf4j-simple`. Adjust by supplying a `simplelogger.properties` on the classpath if you need custom levels.
+Uses `slf4j-simple`. Override defaults via `simplelogger.properties` on classpath if needed.
 
-## Roadmap Ideas (Not Implemented Yet)
-- Replace in-memory lists with SQLite persistence (driver already included)
-- Add CRUD endpoints (POST/PUT/DELETE)
+## Roadmap Ideas
+- Fix environment/version retrieval & health parameter inversion
+- Correct watched movie duplication logic & return created resource
+- Real persistence with SQLite (driver already present)
+- CRUD (PUT/PATCH/DELETE) & validation (e.g., Bean Validation)
 - Pagination / filtering / search
-- Proper config for ENV & APP_VERSION (fix trailing colon issue)
-- Unified test framework (JUnit Jupiter only) + endpoint tests
-- Dockerfile for containerized deployment
+- Dedicated error handling middleware
+- Replace legacy JUnit 4 dependency with pure JUnit 5
+- Dockerfile + CI pipeline
 
 ## Contributing
 1. Fork & clone
-2. Create a feature branch
-3. Write tests for changes
-4. Run `mvn test`
-5. Open a PR describing motivation & changes
+2. Branch: `feat/your-feature`
+3. Add/adjust tests
+4. `mvn test`
+5. PR with clear description & rationale
 
 ## License
-AG PL-3.0 — see [LICENSE](./LICENSE). If you run a modified version as a network service, you must make the source (including modifications) available to users interacting with it.
+AGPL-3.0 — see [LICENSE](./LICENSE). Running a modified network service requires offering the corresponding source to its users.
 
 ## Attribution / Notes
-Generated endpoints are intentionally minimal for learning purposes. Feel free to evolve this into a fuller watch list service.
+Endpoints are intentionally minimal; feel free to evolve into a fuller watch list service. Known issues are documented above for quick iteration.
 
 ---
 Happy hacking!
