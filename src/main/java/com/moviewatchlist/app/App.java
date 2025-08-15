@@ -6,14 +6,16 @@ import io.javalin.Javalin;
 
 public class App {
 
-    public static void main(String[] args) {
-        ApplicationConfig cfg = ApplicationConfig.builder();
-
+    public static Javalin createApp(ApplicationConfig config) {
         System.out.println("Hello Javalings!");
         Javalin app = Javalin.create();
+        Routes.register(app, config.getEnv(), config.getVersion());
+        return app;
+    }
 
-        Routes.register(app,cfg.getEnv(), cfg.getVersion());
-
+    public static void main(String[] args) {
+        ApplicationConfig cfg = ApplicationConfig.builder();
+        var app = createApp(cfg);
         app.start(cfg.getPort());
         org.slf4j.LoggerFactory.getLogger(App.class).info("App started on port {} in {} environment.", cfg.getPort(), cfg.getEnv());
     }
