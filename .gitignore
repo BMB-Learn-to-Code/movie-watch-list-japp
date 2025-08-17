@@ -35,3 +35,13 @@ replay_pid*
 
 # Target
 target
+
+# OS files
+.DS_Store
+
+# SQLite data (local dev only)
+data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm

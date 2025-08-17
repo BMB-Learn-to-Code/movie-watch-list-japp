@@ -1,6 +1,7 @@
 package com.moviewatchlist.app;
 
 import com.moviewatchlist.app.config.ApplicationConfig;
+import com.moviewatchlist.app.config.Database;
 import com.moviewatchlist.app.web.Routes;
 import io.javalin.Javalin;
 
@@ -10,6 +11,7 @@ public class App {
         System.out.println("Hello Javalings!");
         Javalin app = Javalin.create();
         Routes.register(app, config.getEnv(), config.getVersion());
+        Database.init(config.getDb_path());
         return app;
     }
 
