@@ -36,7 +36,7 @@ public class ApplicationConfig {
         ).orElse("7070"));
         String env = Optional.ofNullable(System.getenv("ENV:")).orElse("dev");
         String version = Optional.ofNullable(System.getenv("APP_VERSION:")).orElse("1.0.0");
-        String db_path = Optional.ofNullable(System.getenv("DB_PARH")).orElse("./data/database.db");
+        String db_path = Optional.ofNullable(System.getenv("DB_PATH")).orElse("./data/database.db");
         return new ApplicationConfig(port, env,version, db_path);
     }
 }

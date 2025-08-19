@@ -34,7 +34,7 @@ public class MovieRepository {
     }
 
     public void saveMovie(Movie movie) throws SQLException {
-        String sql = "INSERT INTO movies (title, release_date) VALUES (?, ?)";
+        String sql = "INSERT INTO movies (title, release_timestamp) VALUES (?, ?)";
         try (Connection conn = Database.getConnection();
              var stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, movie.title());
