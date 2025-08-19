@@ -122,7 +122,7 @@ curl -s http://localhost:7070/movies | jq
 # Add watched movie (must be a NEW title not in base list due to current 409 logic)
 curl -i -X POST http://localhost:7070/movies/watch \
   -H 'Content-Type: application/json' \
-  -d '{"title":"Completely Original","releaseDate":2030}'
+  -d '{"title":"Completely Original","releaseTimestamp":2030}'
 
 # List watched
 curl -s http://localhost:7070/movies/watched | jq

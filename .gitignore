@@ -40,8 +40,4 @@ target
 .DS_Store
 
 # SQLite data (local dev only)
-data/
-*.db
-*.db-journal
-*.db-wal
-*.db-shm
+/data

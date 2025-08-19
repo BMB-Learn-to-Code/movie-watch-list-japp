@@ -29,7 +29,7 @@
             <version>3.45.2.0</version>
         </dependency>
 
-        <!-- Flayway for database migrations -->
+        <!-- Flyway for database migrations -->
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
@@ -67,6 +67,20 @@
     </dependencies>
     <build>
         <plugins>
+            <!-- Flyway Maven Plugin -->
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>10.16.0</version>
+                <configuration>
+                    <url>jdbc:sqlite:./data/database.db</url>
+                    <user/>
+                    <password/>
+                    <locations>
+                        <location>filesystem:src/main/resources/db/migration</location>
+                    </locations>
+                </configuration>
+            </plugin>
             <!-- Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -2,7 +2,7 @@ package com.moviewatchlist.app;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moviewatchlist.app.config.ApplicationConfig;
-import com.moviewatchlist.app.models.Movie;
+import com.moviewatchlist.app.domain.Movie;
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ class HealthSmokeTest {
             List<Movie> movies = mapper.readValue(body, mapper.getTypeFactory().constructCollectionType(List.class, Movie.class));
             var first = movies.getFirst();
             assertNotNull(first.title(), "All movies should have a title");
-            assertNotNull(first.releaseDate(), "All movies should have a year");
+            assertNotNull(first.releaseTimestamp(), "All movies should have a year");
             System.out.println("Response body: " + body);
 
         });
