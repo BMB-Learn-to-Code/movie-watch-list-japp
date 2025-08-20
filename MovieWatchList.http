@@ -14,6 +14,19 @@ Accept: application/json
 GET http://localhost:7070/movies/upcoming
 Accept: application/json
 
+
+### Post New Movie (valid)
+POST http://localhost:7070/movies
+Content-Type: application/json
+Accept: application/json
+
+{
+  "title": "Gladiator II",
+  "releaseTimestamp": 2027
+}
+
+
+
 ### Watch Movie (valid)
 POST http://localhost:7070/movies/watch
 Content-Type: application/json
@@ -21,7 +34,7 @@ Accept: application/json
 
 {
   "title": "A Brand New Movie",
-  "releaseDate": 2027
+  "releaseTimestamp": 21732147200
 }
 
 ### Watch Movie (invalid - missing title)
@@ -30,7 +43,7 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "releaseDate": 2030
+  "releaseTimestamp": 2030
 }
 
 ### Watch Movie (duplicate title -> expect 409)
@@ -39,8 +52,8 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "title": "Inception",
-  "releaseDate": 2010
+  "title": "Gladiator II",
+  "releaseTimestamp": 1732147200
 }
 
 ### GET /movies/watch (should return 405)

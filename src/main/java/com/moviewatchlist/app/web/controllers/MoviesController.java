@@ -1,6 +1,7 @@
 package com.moviewatchlist.app.web.controllers;
 
 import com.moviewatchlist.app.domain.Movie;
+import com.moviewatchlist.app.domain.MovieRequestBody;
 import com.moviewatchlist.app.service.MovieService;
 import io.javalin.http.Context;
 
@@ -39,6 +40,21 @@ public class MoviesController {
         } catch (SQLException e) {
            ctx.json(e.getMessage()).status(500);
         }
+    }
+
+    public void save(Context ctx) {
+        var movie = ctx.bodyAsClass(MovieRequestBody.class);
+        if(movie == null){
+            ctx.status(400).result("Invalid movie Data");
+            return;
+        }
+
+        try {
+            movieService.saveMovie(movie);
+        } catch (SQLException e) {
+            ctx.status(500).result("Internal Server Error");
+        }
+        ctx.status(200).result("Movie Saved Successfully");
     }
 
     public void watchMovies(Context ctx) {

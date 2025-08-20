@@ -1,6 +1,7 @@
 package com.moviewatchlist.app.service;
 
 import com.moviewatchlist.app.domain.Movie;
+import com.moviewatchlist.app.domain.MovieRequestBody;
 import com.moviewatchlist.app.repository.MovieRepository;
 
 import java.sql.SQLException;
@@ -15,5 +16,9 @@ public class MovieService {
 
     public List<Movie> getAllMovies() throws SQLException {
         return movieRepository.findAll();
+    }
+
+    public void saveMovie(MovieRequestBody movie) throws SQLException {
+        movieRepository.saveMovie(movie);
     }
 }

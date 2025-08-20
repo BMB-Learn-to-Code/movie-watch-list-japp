@@ -2,6 +2,7 @@ package com.moviewatchlist.app.repository;
 
 import com.moviewatchlist.app.config.Database;
 import com.moviewatchlist.app.domain.Movie;
+import com.moviewatchlist.app.domain.MovieRequestBody;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -33,7 +34,7 @@ public class MovieRepository {
         }
     }
 
-    public void saveMovie(Movie movie) throws SQLException {
+    public void saveMovie(MovieRequestBody movie) throws SQLException {
         String sql = "INSERT INTO movies (title, release_timestamp) VALUES (?, ?)";
         try (Connection conn = Database.getConnection();
              var stmt = conn.prepareStatement(sql)) {
