@@ -21,4 +21,7 @@ public class MovieService {
     public void saveMovie(MovieRequestBody movie) throws SQLException {
         movieRepository.saveMovie(movie);
     }
+    public List<Movie> getAllWatchedMovies(String name) throws SQLException {
+        return movieRepository.findAllWatchedMovies(name);
+    }
 }

@@ -15,7 +15,7 @@ public class Routes {
         var moviesCtrl = new MoviesController();
         app.get("/movies", moviesCtrl::getAll);
         app.post("/movies", moviesCtrl::save);
-        app.get("/movies/watched", moviesCtrl::getWatchedMovies);
+        app.get("/movies/{name}/watched", moviesCtrl::getAllWatched);
         app.get("/movies/upcoming", moviesCtrl::getUpcomingMovies);
         app.post("/movies/watch", moviesCtrl::watchMovies);
         app.get("/movies/watch", ctx -> ctx.status(405).result("Method Not Allowed"));
