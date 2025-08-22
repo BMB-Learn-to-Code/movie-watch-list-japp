@@ -3,116 +3,201 @@
     "_postman_id": "b1e7a8c2-8d2a-4c2a-9e7a-123456789abc",
     "name": "Movie Watch List API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Collection for testing Movie Watch List API endpoints."
+    "description": "Collection for testing Movie Watch List API endpoints. This API provides movie catalog management with user-specific watch lists backed by SQLite database."
   },
   "item": [
     {
       "name": "Health Check",
       "request": {
         "method": "GET",
-        "header": [],
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
         "url": {
           "raw": "{{baseUrl}}/health",
           "host": ["{{baseUrl}}"],
           "path": ["health"]
         }
-      }
+      },
+      "response": []
     },
     {
       "name": "Get All Movies",
       "request": {
         "method": "GET",
-        "header": [],
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
         "url": {
           "raw": "{{baseUrl}}/movies",
           "host": ["{{baseUrl}}"],
           "path": ["movies"]
         }
-      }
+      },
+      "response": []
     },
     {
-      "name": "Get Watched Movies",
+      "name": "Add New Movie",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Dune: Part Three\",\n  \"releaseTimestamp\": 1767225600\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/movies",
+          "host": ["{{baseUrl}}"],
+          "path": ["movies"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Add Movie (Invalid - Missing Title)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"releaseTimestamp\": 1735689600\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/movies",
+          "host": ["{{baseUrl}}"],
+          "path": ["movies"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Watched Movies for User",
       "request": {
         "method": "GET",
-        "header": [],
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
         "url": {
-          "raw": "{{baseUrl}}/movies/watched",
+          "raw": "{{baseUrl}}/movies/john/watched",
           "host": ["{{baseUrl}}"],
-          "path": ["movies", "watched"]
+          "path": ["movies", "john", "watched"]
         }
-      }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Watched Movies for Alice",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/movies/alice/watched",
+          "host": ["{{baseUrl}}"],
+          "path": ["movies", "alice", "watched"]
+        }
+      },
+      "response": []
     },
     {
       "name": "Get Upcoming Movies",
       "request": {
         "method": "GET",
-        "header": [],
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
         "url": {
           "raw": "{{baseUrl}}/movies/upcoming",
           "host": ["{{baseUrl}}"],
           "path": ["movies", "upcoming"]
         }
-      }
+      },
+      "response": []
     },
     {
-      "name": "Watch Movie (valid)",
+      "name": "Mark Movie as Watched (Not Implemented)",
       "request": {
         "method": "POST",
         "header": [
           {
             "key": "Content-Type",
             "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"title\": \"A Brand New Movie\",\n  \"releaseDate\": 2027\n}"
-        },
-        "url": {
-          "raw": "{{baseUrl}}/movies/watch",
-          "host": ["{{baseUrl}}"],
-          "path": ["movies", "watch"]
-        }
-      }
-    },
-    {
-      "name": "Watch Movie (invalid - missing title)",
-      "request": {
-        "method": "POST",
-        "header": [
+          },
           {
-            "key": "Content-Type",
+            "key": "Accept",
             "value": "application/json"
           }
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"releaseDate\": 2030\n}"
+          "raw": "{\n  \"title\": \"Some Movie\",\n  \"releaseTimestamp\": 1735689600\n}"
         },
         "url": {
           "raw": "{{baseUrl}}/movies/watch",
           "host": ["{{baseUrl}}"],
           "path": ["movies", "watch"]
         }
-      }
+      },
+      "response": []
     },
     {
-      "name": "Watch Movies (GET, should fail)",
+      "name": "Watch Movies (GET, should return 405)",
       "request": {
         "method": "GET",
-        "header": [],
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
         "url": {
           "raw": "{{baseUrl}}/movies/watch",
           "host": ["{{baseUrl}}"],
           "path": ["movies", "watch"]
         }
-      }
+      },
+      "response": []
     }
   ],
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:7070"
+      "value": "http://localhost:7070",
+      "type": "string"
     }
   ]
 }
