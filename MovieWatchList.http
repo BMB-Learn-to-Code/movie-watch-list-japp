@@ -6,8 +6,12 @@ Accept: application/json
 GET http://localhost:7070/movies
 Accept: application/json
 
-### Get Watched Movies
-GET http://localhost:7070/movies/watched
+### Get Watched Movies for User "john"
+GET http://localhost:7070/movies/john/watched
+Accept: application/json
+
+### Get Watched Movies for User "alice"
+GET http://localhost:7070/movies/alice/watched
 Accept: application/json
 
 ### Get Upcoming Movies
@@ -15,47 +19,54 @@ GET http://localhost:7070/movies/upcoming
 Accept: application/json
 
 
-### Post New Movie (valid)
+### Add New Movie (valid)
 POST http://localhost:7070/movies
 Content-Type: application/json
 Accept: application/json
 
 {
-  "title": "Gladiator II",
-  "releaseTimestamp": 2025
+  "title": "Dune: Part Three",
+  "releaseTimestamp": 1767225600
 }
 
+### Add New Movie (another example)
+POST http://localhost:7070/movies
+Content-Type: application/json
+Accept: application/json
 
+{
+  "title": "Avatar 3",
+  "releaseTimestamp": 1735689600
+}
 
-### Watch Movie (valid)
+### Add New Movie (invalid - missing title)
+POST http://localhost:7070/movies
+Content-Type: application/json
+Accept: application/json
+
+{
+  "releaseTimestamp": 1735689600
+}
+
+### Add New Movie (invalid - missing releaseTimestamp)
+POST http://localhost:7070/movies
+Content-Type: application/json
+Accept: application/json
+
+{
+  "title": "Invalid Movie"
+}
+
+### Mark Movie as Watched (not implemented - returns 402)
 POST http://localhost:7070/movies/watch
 Content-Type: application/json
 Accept: application/json
 
 {
-  "title": "A Brand New Movie",
-  "releaseTimestamp": 21732147200
+  "title": "Some Movie",
+  "releaseTimestamp": 1735689600
 }
 
-### Watch Movie (invalid - missing title)
-POST http://localhost:7070/movies/watch
-Content-Type: application/json
-Accept: application/json
-
-{
-  "releaseTimestamp": 2030
-}
-
-### Watch Movie (duplicate title -> expect 409)
-POST http://localhost:7070/movies/watch
-Content-Type: application/json
-Accept: application/json
-
-{
-  "title": "Gladiator II",
-  "releaseTimestamp": 1732147200
-}
-
-### GET /movies/watch (should return 405)
+### GET /movies/watch (should return 405 Method Not Allowed)
 GET http://localhost:7070/movies/watch
 Accept: application/json
