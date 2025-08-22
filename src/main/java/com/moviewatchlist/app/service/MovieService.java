@@ -24,4 +24,8 @@ public class MovieService {
     public List<Movie> getAllWatchedMovies(String name) throws SQLException {
         return movieRepository.findAllWatchedMovies(name);
     }
+
+    public List<Movie> getAllUpcomingMovies() throws SQLException {
+        return movieRepository.findAllUpcomingMovies();
+    }
 }

@@ -1,12 +1,10 @@
 package com.moviewatchlist.app.web.controllers;
 
-import com.moviewatchlist.app.domain.Movie;
 import com.moviewatchlist.app.domain.MovieRequestBody;
 import com.moviewatchlist.app.service.MovieService;
 import io.javalin.http.Context;
 
 import java.sql.SQLException;
-import java.util.List;
 
 public class MoviesController {
     private final MovieService movieService;
@@ -41,7 +39,7 @@ public class MoviesController {
     }
     public void getUpcomingMovies(Context ctx) {
         try {
-            var upComingMovies = selectUpcomingMovies();
+            var upComingMovies = movieService.getAllUpcomingMovies();
             ctx.json(upComingMovies).status(200);
         } catch (SQLException e) {
            ctx.json(e.getMessage()).status(500);
@@ -63,14 +61,5 @@ public class MoviesController {
     }
     public void watchMovies(Context ctx) {
         ctx.status(402);
-    }
-    private List<Movie> selectUpcomingMovies() throws SQLException {
-        List<Movie> movies;
-        try{
-            movies = movieService.getAllMovies();
-        } catch (SQLException e) {
-            throw new SQLException("Error fetching movies: " + e.getMessage());
-        }
-        return movies.stream().filter(movie -> movie.releaseTimestamp() > 2025L).toList();
     }
 }

@@ -53,6 +53,17 @@ public class MovieRepository {
         }
     }
 
+    public List<Movie> findAllUpcomingMovies() throws SQLException {
+        List<Movie> movies = new ArrayList<>();
+        String sql = "SELECT * FROM movies WHERE release_timestamp > CURRENT_TIMESTAMP";
+        try (Connection conn = Database.getConnection();
+        var stmt = conn.prepareStatement(sql)) {
+           return getMovies(movies, stmt);
+        } catch (SQLException e) {
+            throw new SQLException(e.getMessage());
+        }
+    }
+
     private List<Movie> getMovies(List<Movie> movies, PreparedStatement stmt) throws SQLException {
         ResultSet rs = stmt.executeQuery();
         while (rs.next()) {
