@@ -1,6 +1,6 @@
 package com.moviewatchlist.app.web.controllers;
 
-import com.moviewatchlist.app.domain.MovieRequestBody;
+import com.moviewatchlist.app.domain.movie.MovieRequestBody;
 import com.moviewatchlist.app.service.MovieService;
 import io.javalin.http.Context;
 
@@ -48,7 +48,7 @@ public class MoviesController {
     public void save(Context ctx) {
         var movie = ctx.bodyAsClass(MovieRequestBody.class);
         if(movie == null){
-            ctx.status(400).result("Invalid movie Data");
+            ctx.status(400).result("Bad request");
             return;
         }
 

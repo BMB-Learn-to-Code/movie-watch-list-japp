@@ -2,6 +2,7 @@ package com.moviewatchlist.app.web;
 
 import com.moviewatchlist.app.web.controllers.HealthController;
 import com.moviewatchlist.app.web.controllers.MoviesController;
+import com.moviewatchlist.app.web.controllers.UsersController;
 import io.javalin.Javalin;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,5 +20,9 @@ public class Routes {
         app.get("/movies/upcoming", moviesCtrl::getUpcomingMovies);
         app.post("/movies/watch", moviesCtrl::watchMovies);
         app.get("/movies/watch", ctx -> ctx.status(405).result("Method Not Allowed"));
+
+        var userCtrl = new UsersController();
+        app.post("/users", userCtrl::Save);
+        app.get("/users", userCtrl::findAllUsers);
     }
 }
