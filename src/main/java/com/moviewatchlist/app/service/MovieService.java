@@ -1,7 +1,7 @@
 package com.moviewatchlist.app.service;
 
-import com.moviewatchlist.app.domain.Movie;
-import com.moviewatchlist.app.domain.MovieRequestBody;
+import com.moviewatchlist.app.domain.movie.Movie;
+import com.moviewatchlist.app.domain.movie.MovieRequestBody;
 import com.moviewatchlist.app.repository.MovieRepository;
 
 import java.sql.SQLException;

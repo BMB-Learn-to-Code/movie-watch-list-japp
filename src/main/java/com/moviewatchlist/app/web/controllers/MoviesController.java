@@ -1,6 +1,6 @@
 package com.moviewatchlist.app.web.controllers;
 
-import com.moviewatchlist.app.domain.MovieRequestBody;
+import com.moviewatchlist.app.domain.movie.MovieRequestBody;
 import com.moviewatchlist.app.service.MovieService;
 import io.javalin.http.Context;
 

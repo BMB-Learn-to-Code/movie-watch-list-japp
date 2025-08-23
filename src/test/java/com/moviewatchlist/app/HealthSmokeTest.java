@@ -2,7 +2,7 @@ package com.moviewatchlist.app;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moviewatchlist.app.config.ApplicationConfig;
-import com.moviewatchlist.app.domain.Movie;
+import com.moviewatchlist.app.domain.movie.Movie;
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 import org.junit.jupiter.api.Test;

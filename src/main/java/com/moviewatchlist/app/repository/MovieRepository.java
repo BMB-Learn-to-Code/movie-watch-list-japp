@@ -1,8 +1,8 @@
 package com.moviewatchlist.app.repository;
 
 import com.moviewatchlist.app.config.Database;
-import com.moviewatchlist.app.domain.Movie;
-import com.moviewatchlist.app.domain.MovieRequestBody;
+import com.moviewatchlist.app.domain.movie.Movie;
+import com.moviewatchlist.app.domain.movie.MovieRequestBody;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
