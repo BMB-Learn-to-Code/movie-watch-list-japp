@@ -11,6 +11,7 @@ import java.util.List;
 
 public class UserRepository {
 
+
     public void saveUser(User user) throws SQLException {
         String sql = "INSERT INTO users (name) VALUES (?)";
         try (Connection conn = Database.getConnection();
@@ -29,6 +30,7 @@ public class UserRepository {
         try (Connection conn = Database.getConnection();
              var stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
+
 
             while (rs.next()) {
                 String name = rs.getString("name");
