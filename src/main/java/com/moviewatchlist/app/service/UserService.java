@@ -7,10 +7,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class UserService {
-    public UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public UserService() {
-        userRepository = new UserRepository();
+        this.userRepository = new UserRepository();
     }
 
     public void saveUser(User user) throws SQLException {
