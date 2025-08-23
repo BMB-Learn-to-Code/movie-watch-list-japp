@@ -5,23 +5,19 @@ import io.javalin.http.Context;
 import java.util.Map;
 
 public class HealthController {
+    private final String environment;
     private final String version;
-    private final String env;
 
-    public HealthController(String version, String env) {
+    public HealthController(String environment, String version) {
+        this.environment = environment;
         this.version = version;
-        this.env = env;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public String getEnv() {
-        return env;
     }
 
     public void health(Context ctx) {
-        ctx.json(Map.of("status", "up", "Env", getEnv(), "version", getVersion()));
+        ctx.status(200).json(Map.of(
+            "status", "up",
+            "environment", environment,
+            "version", version
+        ));
     }
 }
