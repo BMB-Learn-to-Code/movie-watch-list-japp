@@ -7,36 +7,49 @@ import static java.lang.Integer.parseInt;
 public class ApplicationConfig {
     private final int port;
     private final String version;
-    private final String env;
-    private final String db_path;
+    private final String environment;
+    private final String databasePath;
 
-    private ApplicationConfig(int port, String env, String version, String db_path) {
+    private ApplicationConfig(int port, String environment, String version, String databasePath) {
+        validatePort(port);
         this.port = port;
-        this.env = env;
-        this.db_path = db_path;
+        this.environment = environment;
+        this.databasePath = databasePath;
         this.version = version;
+    }
+
+    private void validatePort(int port) {
         if (port < 1 || port > 65535) {
-            throw new IllegalArgumentException("port must be between 1 and 65535");
+            throw new IllegalArgumentException("Port must be between 1 and 65535, got: " + port);
         }
     }
+
     public int getPort() {
         return port;
     }
+
     public String getVersion() {
         return version;
     }
-    public String getEnv() {
-        return env;
-    }
-    public String getDb_path() {return db_path;}
 
-    public static ApplicationConfig builder() {
-        int port = parseInt(Optional.ofNullable(
-                System.getenv("APP_PORT")
-        ).orElse("7070"));
-        String env = Optional.ofNullable(System.getenv("ENV:")).orElse("dev");
-        String version = Optional.ofNullable(System.getenv("APP_VERSION:")).orElse("1.0.0");
-        String db_path = Optional.ofNullable(System.getenv("DB_PATH")).orElse("./data/database.db");
-        return new ApplicationConfig(port, env,version, db_path);
+    public String getEnvironment() {
+        return environment;
+    }
+
+    public String getDatabasePath() {
+        return databasePath;
+    }
+
+    public static ApplicationConfig fromEnvironment() {
+        int port = parseInt(getEnvOrDefault("APP_PORT", "7070"));
+        String environment = getEnvOrDefault("APP_ENV", "dev");
+        String version = getEnvOrDefault("APP_VERSION", "1.0.0");
+        String databasePath = getEnvOrDefault("DB_PATH", "./data/database.db");
+
+        return new ApplicationConfig(port, environment, version, databasePath);
+    }
+
+    private static String getEnvOrDefault(String key, String defaultValue) {
+        return Optional.ofNullable(System.getenv(key)).orElse(defaultValue);
     }
 }
