@@ -129,7 +129,7 @@ Response format same as "List All Movies" but filtered for future releases.
 ### 6. Mark Movie as Watched (Not Implemented)
 `POST /movies/watch`
 
-Currently returns `402 Payment Required` - functionality not yet implemented.
+Currently, returns `402 Payment Required` - functionality not yet implemented.
 
 ### 7. Method Not Allowed Guard
 `GET /movies/watch` → `405 Method Not Allowed` (explicitly implemented guard).
