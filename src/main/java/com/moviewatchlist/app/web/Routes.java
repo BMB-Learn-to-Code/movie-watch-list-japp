@@ -7,22 +7,31 @@ import io.javalin.Javalin;
 import org.jetbrains.annotations.NotNull;
 
 public class Routes {
-    private Routes(){}
+    private Routes() {}
 
-    public static void register(@NotNull Javalin app, String env, String version) {
-        var healthCtrl = new HealthController(env, version);
-        app.get("/health", healthCtrl::health);
+    public static void register(@NotNull Javalin app, String environment, String version) {
+        registerHealthRoutes(app, environment, version);
+        registerMovieRoutes(app);
+        registerUserRoutes(app);
+    }
 
-        var moviesCtrl = new MoviesController();
-        app.get("/movies", moviesCtrl::getAll);
-        app.post("/movies", moviesCtrl::save);
-        app.get("/movies/{name}/watched", moviesCtrl::getAllWatched);
-        app.get("/movies/upcoming", moviesCtrl::getUpcomingMovies);
-        app.post("/movies/watch", moviesCtrl::watchMovies);
-        app.get("/movies/watch", ctx -> ctx.status(405).result("Method Not Allowed"));
+    private static void registerHealthRoutes(Javalin app, String environment, String version) {
+        HealthController healthController = new HealthController(environment, version);
+        app.get("/health", healthController::health);
+    }
 
-        var userCtrl = new UsersController();
-        app.post("/users", userCtrl::Save);
-        app.get("/users", userCtrl::findAllUsers);
+    private static void registerMovieRoutes(Javalin app) {
+        MoviesController moviesController = new MoviesController();
+        app.get("/movies", moviesController::getAll);
+        app.post("/movies", moviesController::save);
+        app.get("/movies/{name}/watched", moviesController::getAllWatched);
+        app.get("/movies/upcoming", moviesController::getUpcomingMovies);
+        app.post("/movies/watch", moviesController::watchMovies);
+    }
+
+    private static void registerUserRoutes(Javalin app) {
+        UsersController usersController = new UsersController();
+        app.post("/users", usersController::save);
+        app.get("/users", usersController::findAllUsers);
     }
 }
