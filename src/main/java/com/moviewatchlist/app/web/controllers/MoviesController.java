@@ -1,76 +1,78 @@
 package com.moviewatchlist.app.web.controllers;
 
-import com.moviewatchlist.app.domain.Movie;
-import com.moviewatchlist.app.domain.MovieRequestBody;
+import com.moviewatchlist.app.domain.movie.MovieRequestBody;
 import com.moviewatchlist.app.service.MovieService;
+import com.moviewatchlist.app.web.ResponseUtil;
 import io.javalin.http.Context;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
-import java.util.List;
 
 public class MoviesController {
+    private static final Logger logger = LoggerFactory.getLogger(MoviesController.class);
     private final MovieService movieService;
 
     public MoviesController() {
-        movieService = new MovieService();
+        this.movieService = new MovieService();
     }
 
     public void getAll(Context ctx) {
         try {
             var movies = movieService.getAllMovies();
             if (movies.isEmpty()) {
-                ctx.status(404).result("No movies found");
+                ctx.status(404).json(ResponseUtil.createErrorResponse("No movies found"));
+                return;
             }
-            ctx.json(movies).status(200);
-
+            ctx.status(200).json(movies);
         } catch (SQLException e) {
-            ctx.json(e.getMessage()).status(500);
+            logger.error("Error fetching all movies", e);
+            ctx.status(500).json(ResponseUtil.createErrorResponse("Internal server error"));
         }
     }
+
     public void getAllWatched(Context ctx) {
-        var name = ctx.pathParam("name");
-        try{
+        String name = ctx.pathParam("name");
+        try {
             var movies = movieService.getAllWatchedMovies(name);
             if (movies.isEmpty()) {
-                ctx.status(404).result("No movies found");
+                ctx.status(404).json(ResponseUtil.createErrorResponse("No watched movies found for user: " + name));
+                return;
             }
-            ctx.json(movies).status(200);
+            ctx.status(200).json(movies);
         } catch (SQLException e) {
-            ctx.json(e.getMessage()).status(500);
+            logger.error("Error fetching watched movies for user: {}", name, e);
+            ctx.status(500).json(ResponseUtil.createErrorResponse("Internal server error"));
         }
     }
+
     public void getUpcomingMovies(Context ctx) {
         try {
-            var upComingMovies = selectUpcomingMovies();
-            ctx.json(upComingMovies).status(200);
+            var upcomingMovies = movieService.getAllUpcomingMovies();
+            ctx.status(200).json(upcomingMovies);
         } catch (SQLException e) {
-           ctx.json(e.getMessage()).status(500);
+            logger.error("Error fetching upcoming movies", e);
+            ctx.status(500).json(ResponseUtil.createErrorResponse("Internal server error"));
         }
     }
-    public void save(Context ctx) {
-        var movie = ctx.bodyAsClass(MovieRequestBody.class);
-        if(movie == null){
-            ctx.status(400).result("Invalid movie Data");
-            return;
-        }
 
+    public void save(Context ctx) {
         try {
+            var movie = ctx.bodyAsClass(MovieRequestBody.class);
+            if (movie == null || movie.title() == null || movie.title().trim().isEmpty()) {
+                ctx.status(400).json(ResponseUtil.createErrorResponse("Invalid movie data"));
+                return;
+            }
+
             movieService.saveMovie(movie);
+            ctx.status(201).json(ResponseUtil.createSuccessResponse("Movie saved successfully"));
         } catch (SQLException e) {
-            ctx.status(500).result("Internal Server Error");
+            logger.error("Error saving movie", e);
+            ctx.status(500).json(ResponseUtil.createErrorResponse("Internal server error"));
         }
-        ctx.status(200).result("Movie Saved Successfully");
     }
-    public void watchMovies(Context ctx) {
-        ctx.status(402);
-    }
-    private List<Movie> selectUpcomingMovies() throws SQLException {
-        List<Movie> movies;
-        try{
-            movies = movieService.getAllMovies();
-        } catch (SQLException e) {
-            throw new SQLException("Error fetching movies: " + e.getMessage());
-        }
-        return movies.stream().filter(movie -> movie.releaseTimestamp() > 2025L).toList();
+
+    public void watchMovie(Context ctx) {
+        ctx.status(501).json(ResponseUtil.createErrorResponse("Not implemented"));
     }
 }
