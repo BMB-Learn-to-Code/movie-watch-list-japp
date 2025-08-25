@@ -1,6 +1,7 @@
 package com.moviewatchlist.app.web.controllers;
 
 import com.moviewatchlist.app.domain.movie.MovieRequestBody;
+import com.moviewatchlist.app.domain.user.User;
 import com.moviewatchlist.app.service.MovieService;
 import com.moviewatchlist.app.web.ResponseUtil;
 import io.javalin.http.Context;
@@ -73,6 +74,18 @@ public class MoviesController {
     }
 
     public void watchMovie(Context ctx) {
-        ctx.status(501).json(ResponseUtil.createErrorResponse("Not implemented"));
+        try {
+            var user = ctx.bodyAsClass(User.class);
+            if (user == null || user.name() == null || user.name().trim().isEmpty()) {
+                ctx.status(400).json(ResponseUtil.createErrorResponse("Invalid user data"));
+                return;
+            }
+            var movieId = ctx.pathParam("movie_id");
+            movieService.watchMovie(user.name(), Long.parseLong(movieId));
+            ctx.status(201).json(ResponseUtil.createSuccessResponse("Movie successfully watched."));
+        } catch (SQLException e) {
+            logger.error("Error saving movie: ", e);
+            ctx.status(500).json(ResponseUtil.createErrorResponse("Internal server error"));
+        }
     }
 }
