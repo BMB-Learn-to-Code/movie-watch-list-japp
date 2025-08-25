@@ -30,13 +30,25 @@ public class MovieRepository {
         }
     }
 
+    public void watchMovie(String userName, long movieId) throws SQLException {
+        String sql = "INSERT INTO watched (user_username, movie_id) VALUES (?,?)";
+        try (Connection conn = Database.getConnection();
+        var stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, userName);
+            stmt.setLong(2, movieId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new SQLException("Failed to save watched: " + userName, e);
+        }
+    }
+
     public List<Movie> findAllWatchedMovies(String username) throws SQLException {
         String sql = """
-                SELECT movies.id, movies.title, movies.release_timestamp 
-                FROM movies 
-                JOIN watched ON movies.id = watched.movie_id 
+                SELECT movies.id, movies.title, movies.release_timestamp\s
+                FROM movies\s
+                JOIN watched ON movies.id = watched.movie_id\s
                 WHERE user_username = ?
-                """;
+               \s""";
         return executeMovieQueryWithParam(sql, username);
     }
 

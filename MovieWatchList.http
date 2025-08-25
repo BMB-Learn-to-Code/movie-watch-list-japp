@@ -2,8 +2,150 @@
 GET http://localhost:7070/health
 Accept: application/json
 
+### =================================
+### USER MANAGEMENT ENDPOINTS
+### =================================
+
+### Get All Users
+GET http://localhost:7070/users
+Accept: application/json
+
+### Create User - john
+POST http://localhost:7070/users
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "john"
+}
+
+### Create User - alice
+POST http://localhost:7070/users
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "alice"
+}
+
+### Create User - bob
+POST http://localhost:7070/users
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "bob"
+}
+
+### Create User (invalid - missing name)
+POST http://localhost:7070/users
+Content-Type: application/json
+Accept: application/json
+
+{
+}
+
+### Create User (invalid - empty name)
+POST http://localhost:7070/users
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": ""
+}
+
+### =================================
+### MOVIE MANAGEMENT ENDPOINTS
+### =================================
+
 ### Get All Movies
 GET http://localhost:7070/movies
+Accept: application/json
+
+### Add Movie - Dune: Part Three (future release)
+POST http://localhost:7070/movies
+Content-Type: application/json
+Accept: application/json
+
+{
+  "title": "Dune: Part Three",
+  "releaseTimestamp": 1767225600
+}
+
+### Add Movie - Avatar 3 (future release)
+POST http://localhost:7070/movies
+Content-Type: application/json
+Accept: application/json
+
+{
+  "title": "Avatar 3",
+  "releaseTimestamp": 1735689600
+}
+
+### Add Movie - The Matrix (past release)
+POST http://localhost:7070/movies
+Content-Type: application/json
+Accept: application/json
+
+{
+  "title": "The Matrix",
+  "releaseTimestamp": 922982400
+}
+
+### Add Movie - Inception (past release)
+POST http://localhost:7070/movies
+Content-Type: application/json
+Accept: application/json
+
+{
+  "title": "Inception",
+  "releaseTimestamp": 1279756800
+}
+
+### Add Movie - Interstellar (past release)
+POST http://localhost:7070/movies
+Content-Type: application/json
+Accept: application/json
+
+{
+  "title": "Interstellar",
+  "releaseTimestamp": 1415059200
+}
+
+### Add Movie (invalid - missing title)
+POST http://localhost:7070/movies
+Content-Type: application/json
+Accept: application/json
+
+{
+  "releaseTimestamp": 1735689600
+}
+
+### Add Movie (invalid - missing releaseTimestamp)
+POST http://localhost:7070/movies
+Content-Type: application/json
+Accept: application/json
+
+{
+  "title": "Invalid Movie"
+}
+
+### Add Movie (invalid - empty title)
+POST http://localhost:7070/movies
+Content-Type: application/json
+Accept: application/json
+
+{
+  "title": "",
+  "releaseTimestamp": 1735689600
+}
+
+### =================================
+### MOVIE QUERY ENDPOINTS
+### =================================
+
+### Get Upcoming Movies
+GET http://localhost:7070/movies/upcoming
 Accept: application/json
 
 ### Get Watched Movies for User "john"
@@ -14,59 +156,44 @@ Accept: application/json
 GET http://localhost:7070/movies/alice/watched
 Accept: application/json
 
-### Get Upcoming Movies
-GET http://localhost:7070/movies/upcoming
+### Get Watched Movies for User "bob"
+GET http://localhost:7070/movies/bob/watched
 Accept: application/json
 
-
-### Add New Movie (valid)
-POST http://localhost:7070/movies
-Content-Type: application/json
+### Get Watched Movies for Non-existent User
+GET http://localhost:7070/movies/nonexistent/watched
 Accept: application/json
 
-{
-  "title": "Dune: Part Three",
-  "releaseTimestamp": 1767225600
-}
+### =================================
+### WATCH MOVIE ENDPOINTS (NOT IMPLEMENTED)
+### =================================
 
-### Add New Movie (another example)
-POST http://localhost:7070/movies
-Content-Type: application/json
-Accept: application/json
-
-{
-  "title": "Avatar 3",
-  "releaseTimestamp": 1735689600
-}
-
-### Add New Movie (invalid - missing title)
-POST http://localhost:7070/movies
-Content-Type: application/json
-Accept: application/json
-
-{
-  "releaseTimestamp": 1735689600
-}
-
-### Add New Movie (invalid - missing releaseTimestamp)
-POST http://localhost:7070/movies
-Content-Type: application/json
-Accept: application/json
-
-{
-  "title": "Invalid Movie"
-}
-
-### Mark Movie as Watched (not implemented - returns 402)
+### Mark Movie as Watched (returns 501 - not implemented)
 POST http://localhost:7070/movies/watch
 Content-Type: application/json
 Accept: application/json
 
 {
-  "title": "Some Movie",
-  "releaseTimestamp": 1735689600
+  "title": "The Matrix",
+  "releaseTimestamp": 922982400
 }
 
 ### GET /movies/watch (should return 405 Method Not Allowed)
 GET http://localhost:7070/movies/watch
+Accept: application/json
+
+### =================================
+### ERROR TESTING
+### =================================
+
+### Invalid Endpoint
+GET http://localhost:7070/invalid
+Accept: application/json
+
+### Invalid HTTP Method on Movies
+PUT http://localhost:7070/movies
+Accept: application/json
+
+### Invalid HTTP Method on Users
+DELETE http://localhost:7070/users
 Accept: application/json

@@ -2,6 +2,7 @@ package com.moviewatchlist.app.service;
 
 import com.moviewatchlist.app.domain.movie.Movie;
 import com.moviewatchlist.app.domain.movie.MovieRequestBody;
+import com.moviewatchlist.app.domain.user.User;
 import com.moviewatchlist.app.repository.MovieRepository;
 
 import java.sql.SQLException;
@@ -21,6 +22,12 @@ public class MovieService {
     public void saveMovie(MovieRequestBody movie) throws SQLException {
         movieRepository.saveMovie(movie);
     }
+
+    public void watchMovie(String name, long movieId) throws SQLException {
+        movieRepository.watchMovie(name, movieId);
+    }
+
+
     public List<Movie> getAllWatchedMovies(String name) throws SQLException {
         return movieRepository.findAllWatchedMovies(name);
     }

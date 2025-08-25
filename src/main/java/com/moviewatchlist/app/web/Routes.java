@@ -26,7 +26,7 @@ public class Routes {
         app.post("/movies", moviesController::save);
         app.get("/movies/{name}/watched", moviesController::getAllWatched);
         app.get("/movies/upcoming", moviesController::getUpcomingMovies);
-        app.post("/movies/watch", moviesController::watchMovies);
+        app.post("/movies/watch", moviesController::watchMovie);
     }
 
     private static void registerUserRoutes(Javalin app) {

@@ -72,7 +72,7 @@ public class MoviesController {
         }
     }
 
-    public void watchMovies(Context ctx) {
+    public void watchMovie(Context ctx) {
         ctx.status(501).json(ResponseUtil.createErrorResponse("Not implemented"));
     }
 }
